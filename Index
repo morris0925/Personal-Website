@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Morris Kuang — Data & Backend Engineering</title>
+<meta name="description" content="Morris Kuang builds event pipelines and the systems that explain them. Incoming MAS-CS at the University of Pennsylvania." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E8EAEE;
+    --panel:#DEE1E8;
+    --ink:#10141B;
+    --muted:#59616E;
+    --rule:#C6CBD4;
+    --accent:#1F3BFF;
+    --signal:#F2B705;
+
+    --display:"Bricolage Grotesque", system-ui, sans-serif;
+    --body:"Instrument Sans", system-ui, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+
+    --gutter:clamp(20px, 5vw, 72px);
+    --maxw:1180px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--accent); color:#fff;}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding-inline:var(--gutter);}
+
+  .mono{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:sticky; top:0; z-index:20;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--rule);
+  }
+  .nav-in{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; height:58px;
+  }
+  .brand{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:.06em;
+    text-decoration:none; white-space:nowrap;
+  }
+  .brand b{font-weight:500;}
+  .nav-links{display:flex; gap:22px; align-items:center;}
+  .nav-links a{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--muted); text-decoration:none;
+    padding-block:6px; border-bottom:1px solid transparent;
+  }
+  .nav-links a:hover{color:var(--ink); border-bottom-color:var(--accent);}
+  @media (max-width:720px){ .nav-links a:nth-child(-n+2){display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{padding-top:clamp(56px,9vw,110px); padding-bottom:clamp(48px,7vw,88px);}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(28px,5vw,64px); align-items:end;}
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr; align-items:start;} }
+
+  .eyebrow{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
+  .dot{width:7px; height:7px; background:var(--accent); border-radius:50%; flex:none;}
+
+  h1{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(40px, 6.6vw, 84px);
+    line-height:.98;
+    letter-spacing:-.025em;
+    margin:0 0 22px;
+    font-variation-settings:"wdth" 88;
+  }
+  h1 em{font-style:normal; color:var(--accent);}
+  .lede{
+    font-size:clamp(16px,1.6vw,18.5px);
+    color:var(--muted);
+    max-width:44ch;
+    margin:0 0 30px;
+  }
+  .lede strong{color:var(--ink); font-weight:600;}
+
+  .cta-row{display:flex; flex-wrap:wrap; gap:10px;}
+  .btn{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.09em; text-transform:uppercase;
+    text-decoration:none; padding:11px 18px; border:1px solid var(--ink);
+    display:inline-block; transition:background .18s ease, color .18s ease, transform .18s ease;
+  }
+  .btn:hover{background:var(--ink); color:var(--paper); transform:translateY(-1px);}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .btn.primary:hover{background:var(--ink); border-color:var(--ink);}
+
+  /* ---------- stream panel (signature) ---------- */
+  .stream{
+    background:var(--panel);
+    border:1px solid var(--rule);
+    padding:16px 18px 18px;
+    min-height:296px;
+    display:flex; flex-direction:column;
+  }
+  .stream-head{
+    display:flex; justify-content:space-between; gap:12px;
+    padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--rule);
+  }
+  .stream-body{
+    font-family:var(--mono); font-size:12px; line-height:1.85;
+    color:var(--ink); flex:1; overflow:hidden;
+  }
+  .stream-body div{opacity:0; animation:appear .28s ease forwards;}
+  .stream-body .k{color:var(--accent);}
+  .stream-body .w{color:#8a6a00;}
+  .stream-body .dim{color:var(--muted);}
+  @keyframes appear{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+  .caret{display:inline-block; width:7px; height:13px; background:var(--accent); vertical-align:-2px; animation:blink 1.05s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---------- section frame ---------- */
+  .sec{padding-block:clamp(52px,7vw,92px); border-top:1px solid var(--rule);}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:38px;}
+  .sec-head h2{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(22px,2.6vw,30px); letter-spacing:-.015em; margin:0;
+    font-variation-settings:"wdth" 90;
+  }
+  .sec-head .rule{flex:1; height:1px; background:var(--rule);}
+
+  /* ---------- log entries ---------- */
+  .entry{
+    display:grid; grid-template-columns:104px 1fr; gap:clamp(16px,3vw,40px);
+    padding-block:30px; border-top:1px solid var(--rule);
+  }
+  .entry:first-of-type{border-top:none; padding-top:0;}
+  @media (max-width:760px){ .entry{grid-template-columns:1fr; gap:12px;} }
+
+  .offset{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.06em;}
+  .offset .num{color:var(--ink); display:block; font-size:13px; margin-bottom:6px;}
+  .tag{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  }
+  .tag::before{content:""; width:6px; height:6px; flex:none;}
+  .tag.project::before{background:var(--accent);}
+  .tag.research::before{background:var(--signal);}
+  .tag.work::before{background:var(--ink);}
+
+  .entry h3{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(20px,2.3vw,26px); letter-spacing:-.015em;
+    margin:0 0 4px; font-variation-settings:"wdth" 92;
+  }
+  .role{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.04em; margin:0 0 14px;}
+  .entry ul{margin:0 0 16px; padding-left:0; list-style:none; max-width:70ch;}
+  .entry li{position:relative; padding-left:20px; margin-bottom:9px;}
+  .entry li::before{content:""; position:absolute; left:0; top:11px; width:9px; height:1px; background:var(--accent);}
+  .stack{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    border:1px solid var(--rule); padding:3px 8px; color:var(--muted); background:var(--panel);
+  }
+  .entry .links{display:flex; gap:14px; margin-top:14px;}
+  .entry .links a{
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    text-decoration:none; border-bottom:1px solid var(--accent); padding-bottom:2px;
+  }
+  .entry .links a:hover{color:var(--accent);}
+
+  /* ---------- schema / skills ---------- */
+  .schema{border:1px solid var(--rule); background:var(--panel);}
+  .row{display:grid; grid-template-columns:180px 1fr; gap:20px; padding:15px 18px; border-top:1px solid var(--rule);}
+  .row:first-child{border-top:none;}
+  @media (max-width:640px){ .row{grid-template-columns:1fr; gap:8px;} }
+  .row .field{font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+  .row .vals{font-family:var(--mono); font-size:12.5px; line-height:1.9;}
+
+  /* ---------- education ---------- */
+  .edu{display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,4vw,48px);}
+  @media (max-width:760px){ .edu{grid-template-columns:1fr;} }
+  .edu h3{font-family:var(--display); font-weight:600; font-size:22px; margin:0 0 4px; letter-spacing:-.01em;}
+  .edu p{margin:0 0 8px; color:var(--muted); font-size:15px;}
+  .edu .when{font-family:var(--mono); font-size:11.5px; letter-spacing:.07em; color:var(--muted); text-transform:uppercase;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--rule); padding-block:clamp(52px,7vw,84px) 44px;}
+  .contact h2{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(30px,5vw,58px); letter-spacing:-.025em; line-height:1.02; margin:0 0 26px;
+    font-variation-settings:"wdth" 88;
+  }
+  .contact-links{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:52px;}
+  .colophon{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:1px solid var(--rule); padding-top:18px;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+    .stream-body div{opacity:1 !important;}
+    .caret{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">MORRIS KUANG <b>/ data &amp; backend</b></a>
+    <div class="nav-links">
+      <a href="#work">Log</a>
+      <a href="#stack">Stack</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span><span class="mono">Philadelphia, PA · Taipei, Taiwan</span></div>
+        <h1>I move events,<br>then make them <em>explain themselves.</em></h1>
+        <p class="lede">
+          Streaming pipelines, analytical stores, and the diagnosis layer on top.
+          Incoming <strong>MAS-CS at Penn</strong>, previously product at Yahoo and data at Delta Electronics.
+          Open to data engineering and backend infrastructure internships for <strong>Summer 2027</strong>.
+        </p>
+        <div class="cta-row">
+          <a class="btn primary" href="mailto:cwkuang@engineering.upenn.edu">Email me</a>
+          <a class="btn" href="https://github.com/morris0925" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="https://linkedin.com/in/morris-kuang" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn" href="resume.pdf">Résumé</a>
+        </div>
+      </div>
+
+      <!-- signature: live consumer view -->
+      <div class="stream" aria-label="Illustrative event stream from the StreamLens project">
+        <div class="stream-head">
+          <span class="mono">topic: github-events</span>
+          <span class="mono">group: streamlens</span>
+        </div>
+        <div class="stream-body" id="stream" role="presentation"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOG -->
+  <section class="wrap sec" id="work">
+    <div class="sec-head">
+      <span class="mono">The log</span>
+      <h2>Read from the newest offset</h2>
+      <span class="rule"></span>
+    </div>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0006</span>
+        <span class="tag project">Project</span>
+      </div>
+      <div>
+        <h3>Down</h3>
+        <p class="role">Founder · Jul 2026 – Present</p>
+        <ul>
+          <li>Shipped a full-stack group scheduling app where an LLM parses calendar screenshots and plain language into structured availability, proposes times, and leaves the final pick to the people in the group.</li>
+          <li>Reached 70+ organic visitors in week one with over half entering the event-creation flow.</li>
+          <li>Turned user interviews into an integration roadmap led by Google Calendar.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">Next.js 14</span><span class="chip">Supabase</span><span class="chip">Vercel</span><span class="chip">LLM APIs</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0005</span>
+        <span class="tag project">Project</span>
+      </div>
+      <div>
+        <h3>StreamLens</h3>
+        <p class="role">Creator · May 2026 – Present</p>
+        <ul>
+          <li>Built a real-time pipeline on Kafka that ingests live GitHub events, lands them as Parquet through PyArrow, and serves analytical queries in DuckDB over continuously arriving data.</li>
+          <li>Building an agentic diagnosis loop: a detected anomaly triggers RAG retrieval over DuckDB vector search, and an LLM ranks root-cause hypotheses with confidence labels.</li>
+          <li>Auto-ticketing stays deferred by design, which keeps a human in the loop and keeps LLM cost and failure modes bounded.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">Python</span><span class="chip">Kafka</span><span class="chip">DuckDB</span><span class="chip">Parquet</span><span class="chip">PyArrow</span><span class="chip">RAG</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0004</span>
+        <span class="tag research">Research</span>
+      </div>
+      <div>
+        <h3>NTU Financial Data Analytics Lab</h3>
+        <p class="role">Data Science Research Assistant · Advisor: Prof. Chen-Ting Lien · Sep 2025 – Mar 2026</p>
+        <ul>
+          <li>Engineered a Selenium scraping and LLM classification pipeline over 18,000+ corporate comment letters spanning 91 accounting changes, applying a lobbying-alignment framework drawn from the literature.</li>
+          <li>Validated model output against human-coded letters at 80% directional agreement with zero contradictions.</li>
+          <li>Identified statistically significant positive abnormal returns among aligned firms across a 1,000+ firm sample.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">Python</span><span class="chip">Selenium</span><span class="chip">LLM APIs</span><span class="chip">Pandas</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0003</span>
+        <span class="tag work">Work</span>
+      </div>
+      <div>
+        <h3>Delta Electronics</h3>
+        <p class="role">Business Transformation Intern, Corporate Operations Strategy · Jul 2025 – Jan 2026</p>
+        <ul>
+          <li>Built ETL pipelines and Power BI dashboards monitoring 7,000+ global projects on 20+ standardized KPIs across 7 international teams.</li>
+          <li>Surfaced sales and operational gaps that shaped a four-business-unit restructuring roadmap for a $50B portfolio.</li>
+          <li>Validated project management workflows across 4 pilots, cutting rework cycles 30% and reporting time 40%.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">SQL</span><span class="chip">ETL</span><span class="chip">Power BI</span><span class="chip">VBA</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0002</span>
+        <span class="tag work">Work</span>
+      </div>
+      <div>
+        <h3>Yahoo</h3>
+        <p class="role">Product Manager Intern, Product Strategy · Jun 2024 – Aug 2024</p>
+        <ul>
+          <li>Synthesized 40 user interviews and 100 surveys into the insight that Gen-Z reads news through other people's perspectives rather than institutional publishers, which redirected the product bet.</li>
+          <li>Led a cross-functional team from idea to prototype on a social-native news MVP and secured executive approval to continue.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">Product strategy</span><span class="chip">User research</span><span class="chip">Prototyping</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry">
+      <div class="offset">
+        <span class="num">0001</span>
+        <span class="tag work">Work</span>
+      </div>
+      <div>
+        <h3>BP</h3>
+        <p class="role">Business Operations Intern, Market Entry &amp; Renewable Energy · Jul 2023 – Aug 2023</p>
+        <ul>
+          <li>Built internal tooling that improved milestone visibility for renewable energy teams across Taiwan and Singapore.</li>
+          <li>Established bp's presence in the new Taiwan market with UK headquarters, rebuilding the local site and opening university research partnerships in agrivoltaics.</li>
+        </ul>
+        <div class="stack">
+          <span class="chip">Excel / VBA</span><span class="chip">Market entry</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- STACK -->
+  <section class="wrap sec" id="stack">
+    <div class="sec-head">
+      <span class="mono">Schema</span>
+      <h2>What I work in</h2>
+      <span class="rule"></span>
+    </div>
+    <div class="schema">
+      <div class="row"><div class="field">Languages</div><div class="vals">Python · Java · C++ · SQL · JavaScript / TypeScript</div></div>
+      <div class="row"><div class="field">Systems &amp; data</div><div class="vals">Kafka · DuckDB · Parquet · PyArrow · ETL pipelines · Docker · Unix / Linux</div></div>
+      <div class="row"><div class="field">Web &amp; backend</div><div class="vals">Next.js · Supabase · REST APIs · Git</div></div>
+      <div class="row"><div class="field">AI &amp; analytics</div><div class="vals">LLM APIs · RAG · Pandas · Selenium · Power BI · VBA</div></div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="wrap sec" id="education">
+    <div class="sec-head">
+      <span class="mono">Education</span>
+      <h2>Two degrees, one direction</h2>
+      <span class="rule"></span>
+    </div>
+    <div class="edu">
+      <div>
+        <span class="when">Aug 2026 – May 2028 (expected) · Philadelphia, PA</span>
+        <h3>University of Pennsylvania</h3>
+        <p>Master of Applied Science, Computer Science</p>
+        <p>Software Development · Data Structures and Software Design · Computer Systems · Algorithms</p>
+      </div>
+      <div>
+        <span class="when">Sep 2021 – Jan 2026 · Taipei, Taiwan</span>
+        <h3>National Taiwan University</h3>
+        <p>B.B.A., Operations and Data Analytics</p>
+        <p>GPA 3.95 / 4.0 · Two-time Dean's List, top 5% of class</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap contact">
+    <h2>Building something<br>that has to stay up?</h2>
+    <div class="contact-links">
+      <a class="btn primary" href="mailto:cwkuang@engineering.upenn.edu">cwkuang@engineering.upenn.edu</a>
+      <a class="btn" href="https://github.com/morris0925" target="_blank" rel="noopener">github.com/morris0925</a>
+      <a class="btn" href="https://linkedin.com/in/morris-kuang" target="_blank" rel="noopener">linkedin.com/in/morris-kuang</a>
+    </div>
+    <div class="colophon">
+      <span class="mono">© 2026 Morris Kuang</span>
+      <span class="mono">Bricolage Grotesque · Instrument Sans · IBM Plex Mono</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var lines = [
+    '<span class="k">[kafka]</span> topic=github-events p=0 offset=48213 <span class="dim">ok</span>',
+    '<span class="k">[arrow]</span> flushed 12,480 rows → parquet/date=2026-07-23',
+    '<span class="k">[duckdb]</span> scan parquet · 41ms · 3 partitions pruned',
+    '<span class="w">[detect]</span> push_rate z=3.9 · repo=apache/kafka',
+    '<span class="k">[rag]</span> retrieved 5 neighbours from incident_notes',
+    '<span class="k">[llm]</span> ranked 3 hypotheses · confidence=medium',
+    '<span class="w">[policy]</span> auto-ticket deferred → awaiting human review',
+    '<span class="dim">[lag] consumer lag 0 · caught up</span>'
+  ];
+
+  var el = document.getElementById('stream');
+  if (!el) return;
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced) {
+    el.innerHTML = lines.join('<br>');
+    return;
+  }
+
+  var i = 0, timer;
+
+  function step() {
+    if (i >= lines.length) {
+      timer = setTimeout(function () { el.innerHTML = ''; i = 0; step(); }, 3200);
+      return;
+    }
+    var row = document.createElement('div');
+    row.innerHTML = lines[i] + (i === lines.length - 1 ? ' <span class="caret"></span>' : '');
+    el.appendChild(row);
+    i++;
+    timer = setTimeout(step, 620);
+  }
+
+  step();
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { clearTimeout(timer); } else { clearTimeout(timer); step(); }
+  });
+})();
+</script>
+
+</body>
+</html>

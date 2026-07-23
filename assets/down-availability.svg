@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1174 970" font-family="Barlow, -apple-system, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5b63e6"/>
+      <stop offset="1" stop-color="#a640ef"/>
+    </linearGradient>
+    <style>
+      .emoji{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1174" height="970" fill="#f4f4ee"/>
+
+  <!-- Event card -->
+  <rect x="100" y="44" width="974" height="120" rx="18" fill="#ffffff" stroke="#e7e7e2" stroke-width="1.5"/>
+  <text x="140" y="98" font-size="27" font-weight="700" fill="#1a1a1a">Dinner</text>
+  <rect x="256" y="76" width="96" height="34" rx="17" fill="#ececec"/>
+  <text x="304" y="100" font-size="17" fill="#666" text-anchor="middle">Editing</text>
+  <text x="140" y="138" font-size="20" fill="#555"><tspan class="emoji">📅</tspan> 7/24 (Fri) ~ 7/30 (Thu) · ~2 hours</text>
+
+  <!-- Heading -->
+  <text x="100" y="234" font-size="36" font-weight="700" fill="#1a1a1a">Update Your Availability <tspan class="emoji">✏️</tspan></text>
+  <text x="100" y="270" font-size="19" fill="#7a7a7a">Adjust the grid, or start over with a screenshot or description</text>
+
+  <!-- Segmented control -->
+  <rect x="100" y="302" width="974" height="60" rx="16" fill="#ffffff" stroke="#e7e7e2" stroke-width="1.5"/>
+  <rect x="428" y="308" width="318" height="48" rx="11" fill="#e9ff57"/>
+  <text x="262" y="339" font-size="21" font-weight="500" fill="#333" text-anchor="middle"><tspan class="emoji">📅</tspan> Pick Slots</text>
+  <text x="587" y="339" font-size="21" font-weight="700" fill="#1a1a1a" text-anchor="middle"><tspan class="emoji">📸</tspan> Screenshot</text>
+  <text x="912" y="339" font-size="21" font-weight="500" fill="#333" text-anchor="middle"><tspan class="emoji">💬</tspan> Just Say It</text>
+
+  <!-- Upload dropzone -->
+  <rect x="100" y="394" width="974" height="250" rx="18" fill="#ffffff" stroke="#cfcfc9" stroke-width="2" stroke-dasharray="8 8"/>
+  <text x="587" y="500" font-size="52" text-anchor="middle" class="emoji">📸</text>
+  <text x="587" y="552" font-size="23" font-weight="500" fill="#333" text-anchor="middle">Upload a calendar screenshot</text>
+  <text x="587" y="588" font-size="18" fill="#9a9a9a" text-anchor="middle">JPG or PNG</text>
+
+  <!-- Notes -->
+  <text x="100" y="692" font-size="19" fill="#666">Notes (Optional)</text>
+  <rect x="100" y="710" width="974" height="112" rx="14" fill="#ffffff" stroke="#e7e7e2" stroke-width="1.5"/>
+  <text x="132" y="754" font-size="19" fill="#9a9a9a">&#8220;Tuesday&#8217;s class doesn&#8217;t take attendance, so I can skip it&#8221;</text>
+
+  <!-- Save button -->
+  <rect x="200" y="848" width="774" height="72" rx="16" fill="url(#grad)"/>
+  <text x="587" y="893" font-size="25" font-weight="700" fill="#ffffff" text-anchor="middle">Save Changes ✓</text>
+
+  <!-- Cancel -->
+  <text x="587" y="948" font-size="19" fill="#8a8a8a" text-anchor="middle">Cancel, back to results</text>
+</svg>
